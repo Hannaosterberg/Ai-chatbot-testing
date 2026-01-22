@@ -50,7 +50,7 @@ app.post("/api/chat", async (req, res) => {
     if (dbConnected) {
       const log = new ChatLog({
         provider: chatProvider.name,
-        messages: [...messages, assistantMessage]
+        messages: [...messages, assistantMessage],
       });
       await log.save();
     }

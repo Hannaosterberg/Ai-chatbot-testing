@@ -37,15 +37,19 @@ app.get("/api/faq", (_, res) => {
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { messages = [], provider = "mock" } = req.body || {};
+    const { messages = [], provider = "anthropic" } = req.body || {};
+    console.log("Backend: Mottog chat request, provider:", provider, "meddelanden:", messages.length);
 
     if (!Array.isArray(messages) || !messages.length) {
       return res.status(400).json({ error: "messages krävs" });
     }
 
+    console.log("Backend: Skapar provider:", provider);
     const chatProvider = createChatProvider(provider);
     const context = { locations, pricing: pricingModels, faqs };
+    console.log("Backend: Anropar provider.respond()...");
     const assistantMessage = await chatProvider.respond({ messages, context });
+    console.log("Backend: Fick svar från provider, längd:", assistantMessage.content?.length || 0);
 
     if (dbConnected) {
       const log = new ChatLog({
@@ -57,8 +61,13 @@ app.post("/api/chat", async (req, res) => {
 
     res.json({ reply: assistantMessage, context });
   } catch (error) {
-    console.error("Chat error", error);
-    res.status(500).json({ error: "Kunde inte hantera chattförfrågan" });
+    console.error("Chat error:", error);
+    // Skicka mer detaljerat felmeddelande till frontend
+    const errorMessage = error.message || "Kunde inte hantera chattförfrågan";
+    res.status(500).json({ 
+      error: errorMessage,
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined
+    });
   }
 });
 

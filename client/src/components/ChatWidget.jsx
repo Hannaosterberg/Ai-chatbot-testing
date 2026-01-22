@@ -3,7 +3,7 @@ import { sendChat } from "../api.js";
 
 export function ChatWidget() {
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hej! Jag kan svara på frågor om lokaler, priser och villkor." }
+    { role: "assistant", content: "Hej! Hur kan jag hjälpa dig idag?" }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,11 +20,21 @@ export function ChatWidget() {
     setInput("");
     setLoading(true);
     try {
-      const res = await sendChat(nextMessages);
-      setMessages([...nextMessages, res.reply]);
+      console.log("Frontend: Skickar meddelande till API...");
+      const res = await sendChat(nextMessages, "anthropic");
+      console.log("Frontend: Fick svar från API:", res);
+      if (res && res.reply) {
+        setMessages([...nextMessages, res.reply]);
+      } else {
+        throw new Error("Inget svar från servern");
+      }
     } catch (error) {
-      setMessages([...nextMessages, { role: "assistant", content: "Tyvärr, något gick fel. Försök igen." }]);
-      console.error(error);
+      console.error("Frontend error:", error);
+      const errorMessage = error.message || "Tyvärr, något gick fel. Försök igen.";
+      setMessages([...nextMessages, { 
+        role: "assistant", 
+        content: `Fel: ${errorMessage}. Kolla serverns console för mer information.` 
+      }]);
     } finally {
       setLoading(false);
     }

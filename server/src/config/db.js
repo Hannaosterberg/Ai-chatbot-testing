@@ -8,7 +8,11 @@ export async function connectDb(uri) {
   mongoose.set("strictQuery", true);
   await mongoose.connect(uri, {
     autoIndex: true,
+<<<<<<< HEAD
     dbName: "ai-chatbot",
+=======
+    dbName: "ai-chatbot"
+>>>>>>> 61eef57edd80cff1fae0211fea50935e47a652c9
   });
 
   return mongoose.connection;

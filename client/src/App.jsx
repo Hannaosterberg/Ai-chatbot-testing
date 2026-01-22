@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout.jsx";
-import { ChatWidget } from "./components/ChatWidget.jsx";
+// import { ChatWidget } from "./components/ChatWidget.jsx";
 import { About } from "./pages/About.jsx";
 import { Blog } from "./pages/Blog.jsx";
 import { Faq } from "./pages/Faq.jsx";
@@ -33,7 +33,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      <ChatWidget />
+      {/* <ChatWidget /> */}
     </>
   );
 }
